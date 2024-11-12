@@ -1,6 +1,5 @@
 import React from "react";
 import Sidenav from "../Sidenav/Sidenav";
-import Topnav from "../Topnav/Topnav";
 
 const DemoLayout = () => {
   return (
@@ -20,15 +19,13 @@ const DemoLayout = () => {
             href: "#",
           },
         ]}
+        walletAddress="GARX7YOCGEIOA5YQXCHA6ZM7764KLCFRVTTQJQZMPLJPCZKHY4KATVM3"
+        onConnectWalletClick={() => {}}
+        onDisconnectWalletClick={() => {}}
+        userBalance={0}
       />
       <div className="w-full">
-        <Topnav
-          walletAddress="GARX7YOCGEIOA5YQXCHA6ZM7764KLCFRVTTQJQZMPLJPCZKHY4KATVM3"
-          onConnectWalletClick={() => {}}
-          userBalance={0}
-          onDisconnectWalletClick={() => {}}
-          navItems={["Service", "Foo"]}
-        />
+        <div className="p-6">Content goes here</div>
       </div>
     </div>
   );

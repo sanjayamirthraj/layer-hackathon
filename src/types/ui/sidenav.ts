@@ -8,4 +8,8 @@ export interface SidenavItemProps {
 
 export interface SidenavProps {
   navItems: SidenavItemProps[];
+  walletAddress?: string;
+  onConnectWalletClick: () => void;
+  onDisconnectWalletClick: () => void;
+  userBalance?: number;
 }

@@ -97,21 +97,13 @@ export default function RootLayout({
               active: pathname.includes(item.address),
               href: `/avs/oracle/${item.address}`,
             }))}
+            walletAddress={appStore.wallet.address}
+            onConnectWalletClick={() => setWalletModalOpen(true)}
+            onDisconnectWalletClick={() => appStore.disconnectWallet()}
+            userBalance={userBalance}
           />
           <div className="w-full">
-            <Topnav
-              walletAddress={appStore.wallet.address}
-              onConnectWalletClick={() => setWalletModalOpen(true)}
-              onDisconnectWalletClick={() => appStore.disconnectWallet()}
-              navItems={[
-                "Services",
-                taskQueueAddresses.find((task) =>
-                  pathname.includes(task.address)
-                )?.title || "",
-              ]}
-              userBalance={userBalance}
-            />
-            <div className="p-6 overflow-y-scroll max-h-[calc(100vh-65px)]">
+            <div className="p-6 overflow-y-scroll max-h-[calc(100vh)]">
               {children}
             </div>
           </div>
@@ -124,7 +116,6 @@ export default function RootLayout({
             handleFaucet();
           }}
         />
-
         <FaucetModal
           open={faucetModalOpen}
           setOpen={(open) => setFaucetModalOpen(open)}
