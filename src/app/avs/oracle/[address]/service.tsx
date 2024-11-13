@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { TaskQueueEntryProps } from "@/types";
 import { fetchTasks } from "@/utils/tasks";
 import SubmitTask from "@/components/AddTask/AddTask";
+import FastExitRate from "@/components/FastExitRate/FastExitRate";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -17,6 +18,7 @@ import SubmitTask from "@/components/AddTask/AddTask";
  */
 export default function Service({ address }: { address: string }) {
   const [taskQueue, setTaskQueue] = useState<TaskQueueEntryProps[]>([]);
+  const [fastExitRate, setFastExitRate] = useState<number>(0);
 
   /**
    * Fetches the tasks from the task queue based on the provided address and updates the task queue state.
@@ -43,7 +45,8 @@ export default function Service({ address }: { address: string }) {
   }, []);
 
   return (
-    <div>
+    <div className="relative">
+      <FastExitRate rate={fastExitRate} />
       <section>
         <h1 className="font-bold text-text-primary text-[26px] mb-4">Services</h1>
         <div className="grid grid-cols-4 gap-4 pb-[40px] mb-[40px] border-b border-border-primary">

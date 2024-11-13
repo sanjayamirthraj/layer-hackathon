@@ -6,7 +6,7 @@ const Sidenav: React.FC<SidenavProps> = (props) => {
   const { navItems, walletAddress, onConnectWalletClick, onDisconnectWalletClick, userBalance } = props;
 
   return (
-    <div className="h-full px-6 bg-background border-r border-r-border-primary max-w-[302px] flex flex-col">
+    <div className="h-full px-6 bg-background border-r border-r-border-primary max-w-[400px] flex flex-col">
       {/* Logo */}
       <a href="/" className="flex py-3 mb-6 border-b border-b-border-primary">
         <img src="/layer_logo.svg" width={260} height={120} alt="LAYER Logo" />
@@ -19,7 +19,7 @@ const Sidenav: React.FC<SidenavProps> = (props) => {
             {userBalance !== undefined && (
               <div className="flex items-center text-text-primary text-sm font-semibold">
                 <span className="mr-1">{userBalance.toFixed(2)}</span>
-                <span className="text-text-secondary">LAYER</span>
+                <span className="text-text-secondary">Built on LAYER</span>
               </div>
             )}
             <div className="flex items-center space-x-2">
@@ -38,7 +38,7 @@ const Sidenav: React.FC<SidenavProps> = (props) => {
               onClick={onDisconnectWalletClick}
               className="w-full text-text-primary text-sm py-2 px-2 font-bold hover:bg-background-interactive-hover rounded-md"
             >
-              Disconnect Wallet
+              Disconnect
             </button>
           </div>
         ) : (
@@ -47,13 +47,13 @@ const Sidenav: React.FC<SidenavProps> = (props) => {
             className="w-full text-text-primary rounded-md text-sm py-2 px-2 font-bold bg-background-brand flex items-center justify-center"
           >
             <span className="material-icons mr-1">sensors</span>
-            <span>Connect to Wallet</span>
+            <span>Connect</span>
           </button>
         )}
       </div>
 
       {/* Navigation Items */}
-      <div className="flex-grow">
+      {/* <div className="flex-grow">
         {navItems.map((item, index) => (
           <a
             key={index}
@@ -79,7 +79,7 @@ const Sidenav: React.FC<SidenavProps> = (props) => {
             </span>
           </a>
         ))}
-      </div>
+      </div> */}
 
       {/* Created By Section */}
       <div className="mt-auto mb-4 p-3 bg-background-primary rounded-lg border border-border-primary">
