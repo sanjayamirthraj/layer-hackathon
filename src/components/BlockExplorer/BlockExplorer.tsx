@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card } from "../Card/Card";
 import FastExitRate from "../FastExitRate/FastExitRate";
 import { ethers } from "ethers";
+import { abi, address } from "@/lib/abi";
 
 interface Block {
   height: number;
@@ -30,11 +31,27 @@ interface BlockExplorerProps {
 }
 
 // Update provider creation
-const INFURA_URL = `https://optimism-mainnet.infura.io/v3/${process.env.INFURA_KEY}`;
+const INFURA_URL = `https://sepolia.infura.io/v3/5f0840eed75d4be8bad7ee7011aa1c37`;
 const provider = new ethers.JsonRpcProvider(INFURA_URL);
+const OPTIMISM_INFURA_URL = `https://optimism-mainnet.infura.io/v3/5f0840eed75d4be8bad7ee7011aa1c37`;
+const optimismProvider = new ethers.JsonRpcProvider(OPTIMISM_INFURA_URL);
+const contract = new ethers.Contract(address, abi, provider);
+
+async function getValue(currentBlock: number) {
+  try {
+    const currentBlockNumber = await optimismProvider.getBlockNumber();
+    console.log("currentBlock", currentBlock)
+    console.log("currentBlockNumber", currentBlockNumber)
+    const value = await contract.getIndex(currentBlock, currentBlockNumber);
+    console.log("Value from contract:", value.toString());
+    return Number(value);
+  } catch (error) {
+    console.error("Error calling contract function:", error);
+  }
+}
+
 
 const BlockExplorer: React.FC<BlockExplorerProps> = ({ reliabilityScore = 100 }) => {
-  // Initialize with empty array instead of placeholder block
   const [latestBlocks, setLatestBlocks] = useState<Block[]>([]);
   
   const fastExitRate = reliabilityScore / 100;
@@ -42,11 +59,14 @@ const BlockExplorer: React.FC<BlockExplorerProps> = ({ reliabilityScore = 100 })
   useEffect(() => {
     const fetchLatestBlock = async () => {
       try {
-        const blockNumber = await provider.getBlockNumber();
+        const blockNumber = await optimismProvider.getBlockNumber();
         console.log("Latest block number:", blockNumber);
         
-        const block = await provider.getBlock(blockNumber);
+        const block = await optimismProvider.getBlock(blockNumber);
         console.log("Block data:", block);
+
+        const scoreFinality = await getValue(blockNumber);
+        console.log("Score:", scoreFinality);
         
         if (!block) {
           console.log("No block data received");
@@ -61,15 +81,20 @@ const BlockExplorer: React.FC<BlockExplorerProps> = ({ reliabilityScore = 100 })
           proposer: block.miner || '',
           gasUsed: block.gasUsed.toString(),
           gasLimit: block.gasLimit.toString(),
-          score: 0,
+          score: scoreFinality, 
           interestRate: 0,
         };
-        
 
         setLatestBlocks(prev => {
           if (prev[0]?.height !== newBlock.height) {
             const updated = [newBlock, ...prev];
-            return updated.slice(0, 10);
+            getValue(newBlock.height);
+
+            for (let i = 101; i < Math.min(201, updated.length); i++) {
+              updated[i].score = newBlock.score;
+            }
+
+            return updated.slice(0, 200); 
           }
           return prev;
         });
