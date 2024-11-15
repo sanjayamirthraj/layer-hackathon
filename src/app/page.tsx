@@ -1,26 +1,63 @@
 "use client";
+import { useEffect, useState } from "react";
+import { fetchTasks } from "@/utils/tasks";
 import BlockExplorer from "@/components/BlockExplorer/BlockExplorer";
 
 export default function Home() {
-  const mockBlocks = [
-    {
-      height: 1234567,
-      hash: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-      timestamp: "2024-03-21T14:32:15Z",
-      transactions: 150,
-      proposer: "0xabcdef1234567890abcdef1234567890abcdef1234",
-      gasUsed: "1,234,567",
-      gasLimit: "2,000,000",
-    }];
+  const [blocks, setBlocks] = useState([]);
+  const [task, setTask] = useState<any[]>([]);
 
-  const mockBlock = Array(10).fill(mockBlocks[0]);
+  useEffect(() => {
+    const getTasks = async () => {
+      //const tasks = await fetchTasks("layer1r93mdrsuzlzsh70n8mmpzachj6sfpw6r0rvd2fx7skxfdlnclgdsdnryy8");
+      const tasks = await fetchTasks("layer1dkewprupg2xcr4nvmztc5ekz5ed3cu5qzchmxq9rv7sz5s5kq3psjc7z9e");
+      setBlocks(tasks as any);
+      setTask(tasks);
+      console.log(tasks);
+    };
+    // {id: '3', status: 'COMPLETE', addedTime: '2024-11-12T07:27:38.311Z', finishTime: '2024-11-12T07:27:38.311Z', json: '{"y":144}'}
+
+    getTasks();
+  }, []);
 
   const exampleRates = [8.62, 17.21, 13.96];
-  const fastExitRate = exampleRates[Math.floor(Math.random() * exampleRates.length)];
 
+  const minValue = 0.0;
+  const maxValue = 100.0;
+
+  function calculateFastExitScore(fastExitValue: number): number {
+    if (fastExitValue <= minValue) {
+        return 1;
+    }
+    const score = 1 + (99 * Math.log10(1 + fastExitValue) / Math.log10(1 + maxValue));
+    return Math.min(100, Math.round(score));
+}
+
+  
+  const processedTasks = task.map(t => {
+    try {
+      const jsonData = JSON.parse(t.json);
+      const value = Object.values(jsonData).find(v => typeof v === 'number');
+      if (value !== undefined) {
+        return {
+          ...t,
+          json: ((Math.abs(value) % 2.9) + 0.1)
+        };
+      }
+    } catch (e) {
+      console.warn('Failed to parse JSON for task:', t.id);
+    }
+    return t;
+  });
+  const fastExitRate = processedTasks[0]?.json || 0;
+  const reliabilityScore = calculateFastExitScore(fastExitRate);
   return (
     <main className="container mx-auto p-6">
-      <BlockExplorer blocks={mockBlock} fastExitRate={fastExitRate} />
+      <BlockExplorer 
+        blocks={blocks}
+        reliabilityScore={reliabilityScore}
+        task={task}
+      />
     </main>
   );
 }

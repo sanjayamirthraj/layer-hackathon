@@ -57,6 +57,10 @@ export const taskQueueAddresses: { title: string; address: string }[] = [
     title: "Square Task",
     address: "layer1dkewprupg2xcr4nvmztc5ekz5ed3cu5qzchmxq9rv7sz5s5kq3psjc7z9e",
   },
+  {
+    title: "Fast Exit Task",
+    address: "layer1r93mdrsuzlzsh70n8mmpzachj6sfpw6r0rvd2fx7skxfdlnclgdsdnryy8"
+  }
 ];
 
 /**
