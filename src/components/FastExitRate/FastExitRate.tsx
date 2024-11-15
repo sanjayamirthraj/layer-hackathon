@@ -3,28 +3,28 @@ import { Card, CardBody } from "../Card/Card";
 
 interface FastExitRateProps {
   rate: number;
+  reliabilityScore: number;
 }
 
-const FastExitRate: React.FC<FastExitRateProps> = ({ rate }) => {
-  // Determine status message based on rate thresholds
+const FastExitRate: React.FC<FastExitRateProps> = ({ rate, reliabilityScore }) => {
+  // Update thresholds for interest rate context
   const getStatusMessage = () => {
-    if (rate < 3) {
-      return "Low - Fast exit rate is lower than usual";
-    } else if (rate > 12) {
-      return "High - Fast exit rate is higher than usual";
+    if (rate < 5) {
+      return "Low - Interest rate is lower than usual";
+    } else if (rate > 15) {
+      return "High - Interest rate is higher than usual";
     }
-    return "Moderate - Fast exit rate at moderate levels";
+    return "Moderate - Interest rate at moderate levels";
   };
 
   // Calculate reliability score (example: inverse relationship with rate)
-  const reliabilityScore = Math.max(0, 100 - (rate * 4));
   const getReliabilityMessage = () => {
     if (reliabilityScore >= 80) {
-      return "Low Chance of Dispute";
+      return "Low Risk Level";
     } else if (reliabilityScore >= 50) {
-      return "Average Chance of Dispute";
+      return "Moderate Risk Level";
     }
-    return "High Chance of Dispute";
+    return "High Risk Level";
   };
 
   return (
@@ -53,7 +53,7 @@ const FastExitRate: React.FC<FastExitRateProps> = ({ rate }) => {
             {/* Reliability Score Bar */}
             <div className="mt-4">
               <div className="flex justify-between text-sm text-text-secondary mb-1">
-                <span>Reliability Score</span>
+                <span>Reliability Score of Latest Block</span>
                 <span>{reliabilityScore.toFixed(2)}%</span>
               </div>
               <div className="h-2 bg-background-interactive-hover rounded-full">

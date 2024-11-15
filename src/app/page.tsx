@@ -20,16 +20,13 @@ export default function Home() {
     getTasks();
   }, []);
   
-  const minValue = 0.0;
-  const maxValue = 500.0;
-
   function calculateFastExitScore(fastExitValue: number): number {
-    if (fastExitValue <= minValue) {
-        return 1;
+    if (fastExitValue <= 0) {
+        return 100;
     }
-    const score = 1 + (99 * Math.log10(1 + fastExitValue) / Math.log10(1 + maxValue));
-    return Math.min(100, Math.round(score));
-}
+    const score = 100 - (97 * Math.log10(1 + fastExitValue) / Math.log10(20000));
+    return Math.max(1, Math.round(score));
+  }
 
   
   const processedTasks = task.map(t => {
@@ -43,7 +40,7 @@ export default function Home() {
         };
       }
     } catch (e) {
-      console.warn('Failed to parse JSON for task:', t.id);
+      console.warn('Failed to parse JSON for task:', t.id, e);
     }
     return t;
   });
@@ -54,7 +51,7 @@ export default function Home() {
       <BlockExplorer 
         blocks={blocks}
         reliabilityScore={reliabilityScore}
-        task={task}
+        calculateFastExitScore={calculateFastExitScore}
       />
     </main>
   );

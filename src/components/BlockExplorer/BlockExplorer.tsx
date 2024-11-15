@@ -16,18 +16,10 @@ interface Block {
   interestRate?: number;
 }
 
-interface Task {
-  id: string;
-  status: string;
-  addedTime: string;
-  finishTime: string | undefined;
-  json: string;
-}
-
 interface BlockExplorerProps {
   blocks: Block[];
   reliabilityScore?: number;
-  task?: Task[];
+  calculateFastExitScore?: (fastExitValue: number) => number;
 }
 
 // Update provider creation
@@ -51,11 +43,12 @@ async function getValue(currentBlock: number) {
 }
 
 
-const BlockExplorer: React.FC<BlockExplorerProps> = ({ reliabilityScore = 100 }) => {
+const BlockExplorer: React.FC<BlockExplorerProps> = ({ 
+  calculateFastExitScore 
+}) => {
   const [latestBlocks, setLatestBlocks] = useState<Block[]>([]);
+  const [averageInterestRate, setAverageInterestRate] = useState<number>(0);
   
-  const fastExitRate = reliabilityScore / 100;
-
   useEffect(() => {
     const fetchLatestBlock = async () => {
       try {
@@ -88,13 +81,30 @@ const BlockExplorer: React.FC<BlockExplorerProps> = ({ reliabilityScore = 100 })
         setLatestBlocks(prev => {
           if (prev[0]?.height !== newBlock.height) {
             const updated = [newBlock, ...prev];
-            getValue(newBlock.height);
-
-            for (let i = 101; i < Math.min(201, updated.length); i++) {
-              updated[i].score = newBlock.score;
+            
+            for (let i = 1; i < updated.length; i++) {
+              if (newBlock.score !== undefined) {
+                updated[i] = {
+                  ...updated[i],
+                  score: (updated[i].score || 0) + newBlock.score
+                };
+              }
             }
 
-            return updated.slice(0, 200); 
+            updated.forEach(block => {
+              if (block.score !== undefined && calculateFastExitScore) {
+                block.interestRate = calculateFastExitScore(block.score);
+              }
+            });
+
+            // Calculate average interest rate
+            const totalInterestRate = updated.reduce((sum, block) => 
+              sum + (block.interestRate || 0), 0
+            );
+            const avgRate = totalInterestRate / updated.length;
+            setAverageInterestRate(avgRate);
+
+            return updated.slice(0, 200);
           }
           return prev;
         });
@@ -106,12 +116,15 @@ const BlockExplorer: React.FC<BlockExplorerProps> = ({ reliabilityScore = 100 })
     fetchLatestBlock();
     const interval = setInterval(fetchLatestBlock, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [calculateFastExitScore]);
 
   return (
     <div>
       <div className="mb-6">
-        <FastExitRate rate={fastExitRate} />
+        <FastExitRate 
+          rate={averageInterestRate} 
+          reliabilityScore={latestBlocks[0]?.score ?? 0}
+        />
       </div>
       <div className="space-y-6">
         <Card>
