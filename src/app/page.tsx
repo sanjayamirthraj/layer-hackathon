@@ -19,11 +19,9 @@ export default function Home() {
 
     getTasks();
   }, []);
-
-  const exampleRates = [8.62, 17.21, 13.96];
-
+  
   const minValue = 0.0;
-  const maxValue = 100.0;
+  const maxValue = 500.0;
 
   function calculateFastExitScore(fastExitValue: number): number {
     if (fastExitValue <= minValue) {

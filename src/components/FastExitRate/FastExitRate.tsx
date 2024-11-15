@@ -8,9 +8,9 @@ interface FastExitRateProps {
 const FastExitRate: React.FC<FastExitRateProps> = ({ rate }) => {
   // Determine status message based on rate thresholds
   const getStatusMessage = () => {
-    if (rate < 1) {
+    if (rate < 3) {
       return "Low - Fast exit rate is lower than usual";
-    } else if (rate > 2) {
+    } else if (rate > 12) {
       return "High - Fast exit rate is higher than usual";
     }
     return "Moderate - Fast exit rate at moderate levels";
@@ -20,11 +20,11 @@ const FastExitRate: React.FC<FastExitRateProps> = ({ rate }) => {
   const reliabilityScore = Math.max(0, 100 - (rate * 4));
   const getReliabilityMessage = () => {
     if (reliabilityScore >= 80) {
-      return "Strong validator retention";
+      return "Low Chance of Dispute";
     } else if (reliabilityScore >= 50) {
-      return "Average validator retention";
+      return "Average Chance of Dispute";
     }
-    return "High validator turnover";
+    return "High Chance of Dispute";
   };
 
   return (
